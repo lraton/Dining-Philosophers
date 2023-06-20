@@ -239,7 +239,7 @@ int main(int argc, char * argv[]) {
                         printf("\n");
                         printf("Filosofo %d mangia\n", i);
                         printf("\n");
-                        //sleep(1);
+                        sleep(1);
 
                         //filosofo libera le forchette
                         if (i != conv - 1) {
@@ -263,9 +263,9 @@ int main(int argc, char * argv[]) {
 
                 }
                 fflush(stdout);
-                return (3);
+                return (3); //child filosofo ritorna 3
             } else { //processo per controlalre stallo
-                if (checkdeadlock == 1 && checkStarvation == 0) { //viene attivato soltanto se è attivo solamente il checkDeadlock
+                if (checkdeadlock == 1 && checkStarvation == 0 && NoDeadlock == 0) { //viene attivato soltanto se è attivo solamente il checkDeadlock
                     while ( * stopFlag != 1) { // controlla la matrice finchè non trova un deadlock
                         int count = 0;
                         int stallo = 0;
@@ -286,7 +286,7 @@ int main(int argc, char * argv[]) {
                     }
                 }
                 fflush(stdout);
-                return (4);
+                return (4); //child per il controllo del deadlock ritorna 4
             }
 
         } else {

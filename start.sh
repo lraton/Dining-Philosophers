@@ -2,8 +2,13 @@
 
 if [[ $# != 4 ]];
 then
-    echo "Devi mettere 4 parametri: Numero filosofi, check deadlock(1 o 0), algoritmo no deadlock (1 o 0), check starvation (1 o 0)"
+    echo "Devi mettere 4 parametri: Numero filosofi (>2), check deadlock(1 o 0), algoritmo no deadlock (1 o 0), check starvation (1 o 0)"
 else
+    if [[ ${1:0} < 2 ]] && [[ -z ${1:1} ]];
+    then
+        echo "Il numero dei filosofi deve essre > 2"
+        exit 1
+    fi
     if [[ $2 != 0 ]];
     then
         if [[ $2 != 1 ]];
