@@ -50,7 +50,6 @@ int main(int argc, char * argv[]) {
     sem[conv];
     pid_t pids[conv]; //Vettore per i vari child
 
-
     //matrice per rilevamento deadlock shared memory, potrei utilizzare una semplice varibile ma in quel caso dovrei usare un'altro semaforo'
     int * w[conv][conv];
     for (int i = 0; i < conv; i++) {
@@ -88,7 +87,7 @@ int main(int argc, char * argv[]) {
     }
 
     //Variabile sem_timedwait
-    int s=0;
+    int s = 0;
 
     /* Start children. */
     for (int i = 0; i <= conv; i++) { //Genero un processo in più che uso per controllare lo stallo
@@ -105,73 +104,73 @@ int main(int argc, char * argv[]) {
 
                         //Timeout starvation
                         struct timespec timeout;
-                        if (clock_gettime(CLOCK_REALTIME, &timeout) == -1)
-                        {return -1;}
+                        if (clock_gettime(CLOCK_REALTIME, & timeout) == -1) {
+                            return -1;
+                        }
                         timeout.tv_sec += 8; // Set the timeout to 8 seconds
 
                         //filosofo prende la forchetta sinistra e destra
                         if (i != conv - 1) {
                             printf("Filosofo %d aspetta la forchetta sinistra %d\n", i, i);
-                            if(checkStarvation==1){ //se il controllo dello starvation è attivo faccio il timedwait sennò il wait normale
-                                s=sem_timedwait(sem[i].sem,&timeout);
-                            }else{
+                            if (checkStarvation == 1) { //se il controllo dello starvation è attivo faccio il timedwait sennò il wait normale
+                                s = sem_timedwait(sem[i].sem, & timeout);
+                            } else {
                                 sem_wait(sem[i].sem);
                             }
                             if ( * stopFlag == 1 || s == -1) { //Dopo ogni wait effettuo il controllo se il timedwait è scaduto o se è attiva la flag per stopapre tutto
-                                if(s == -1){
+                                if (s == -1) {
                                     printf("\nStarvation detected \n");
                                 }
-                                *stopFlag=1;
+                                * stopFlag = 1;
                                 break;
                             }
 
                             printf("Filosofo %d ha preso la forchetta sinistra %d\n", i, i);
                             printf("Filosofo %d aspetta la forchetta destra %d\n", i, i + 1);
-                            if(checkStarvation==1){
-                                s=sem_timedwait(sem[i + 1].sem,&timeout);
-                            }else{
-                                sem_wait(sem[i+1].sem);
+                            if (checkStarvation == 1) {
+                                s = sem_timedwait(sem[i + 1].sem, & timeout);
+                            } else {
+                                sem_wait(sem[i + 1].sem);
                             }
                             if ( * stopFlag == 1 || s == -1) {
-                                if(s == -1){
+                                if (s == -1) {
                                     printf("\nStarvation detected \n");
                                 }
-                                *stopFlag=1;
+                                * stopFlag = 1;
                                 break;
                             }
                             printf("Filosofo %d ha preso la forchetta destra %d\n", i, i + 1);
-                        } else {//se è l'ultimo filosofo prendo prima la destra poi la sinistra
+                        } else { //se è l'ultimo filosofo prendo prima la destra poi la sinistra
                             printf("Filosofo %d aspetta la forchetta destra 0 \n", i);
-                            if(checkStarvation==1){
-                                s=sem_timedwait(sem[0].sem,&timeout);
-                            }else{
+                            if (checkStarvation == 1) {
+                                s = sem_timedwait(sem[0].sem, & timeout);
+                            } else {
                                 sem_wait(sem[0].sem);
                             }
                             if ( * stopFlag == 1 || s == -1) {
-                                if(s == -1){
+                                if (s == -1) {
                                     printf("\nStarvation detected \n");
                                 }
-                                * stopFlag=1;
+                                * stopFlag = 1;
                                 break;
                             }
                             printf("Filosofo %d ha preso la forchetta destra 0 \n", i);
                             //sleep(1);
                             printf("Filosofo %d aspetta la forchetta sinistra %d \n", i, i);
-                            if(checkStarvation==1){
-                                s=sem_timedwait(sem[i].sem,&timeout);
-                            }else{
+                            if (checkStarvation == 1) {
+                                s = sem_timedwait(sem[i].sem, & timeout);
+                            } else {
                                 sem_wait(sem[i].sem);
                             }
                             if ( * stopFlag == 1 || s == -1) {
-                                if(s == -1){
+                                if (s == -1) {
                                     printf("\nStarvation detected \n");
                                 }
-                                *stopFlag=1;
+                                * stopFlag = 1;
                                 break;
                             }
                             printf("Filosofo %d ha preso la forchetta sinistra %d \n", i, i);
                         }
-
 
                         //filosofo mangia
                         printf("\n");
@@ -179,10 +178,10 @@ int main(int argc, char * argv[]) {
                         printf("\n");
                         //sleep(1);
                         if ( * stopFlag == 1 || s == -1) {
-                            if(s == -1){
-                                    printf("\nStarvation detected \n");
+                            if (s == -1) {
+                                printf("\nStarvation detected \n");
                             }
-                            *stopFlag=1;
+                            * stopFlag = 1;
                             break;
                         }
 
@@ -205,8 +204,8 @@ int main(int argc, char * argv[]) {
                         if (i != conv - 1) {
                             printf("Filosofo %d aspetta la forchetta sinistra %d\n", i, i);
                             sem_wait(sem[i].sem);
-                            * w[i][i] = 1;  //aggiorno la matrice di deadlock
-                            if ( * stopFlag == 1 ) {//il controllo lo effettuo dopo ogni wait così da poter uscire in caso vada in deadlock
+                            * w[i][i] = 1; //aggiorno la matrice di deadlock
+                            if ( * stopFlag == 1) { //il controllo lo effettuo dopo ogni wait così da poter uscire in caso vada in deadlock
                                 break;
                             }
                             printf("Filosofo %d ha preso la forchetta sinistra %d\n", i, i);
@@ -214,7 +213,7 @@ int main(int argc, char * argv[]) {
                             printf("Filosofo %d aspetta la forchetta destra %d\n", i, i + 1);
                             sem_wait(sem[i + 1].sem);
                             * w[i][i + 1] = 1;
-                            if ( * stopFlag == 1 ) {
+                            if ( * stopFlag == 1) {
                                 break;
                             }
                             printf("Filosofo %d ha preso la forchetta destra %d\n", i, i + 1);
@@ -222,7 +221,7 @@ int main(int argc, char * argv[]) {
                             printf("Filosofo %d aspetta la forchetta sinistra %d \n", i, i);
                             sem_wait(sem[i].sem);
                             * w[i][i] = 1;
-                            if ( * stopFlag == 1 ) {
+                            if ( * stopFlag == 1) {
                                 break;
                             }
                             printf("Filosofo %d ha preso la forchetta sinistra %d \n", i, i);
@@ -230,7 +229,7 @@ int main(int argc, char * argv[]) {
                             printf("Filosofo %d aspetta la forchetta destra 0 \n", i);
                             sem_wait(sem[0].sem);
                             * w[i][0] = 1;
-                            if ( * stopFlag == 1 ) {
+                            if ( * stopFlag == 1) {
                                 break;
                             }
                             printf("Filosofo %d ha preso la forchetta destra 0 \n", i);
@@ -263,8 +262,8 @@ int main(int argc, char * argv[]) {
                     }
 
                 }
-            fflush(stdout);
-            return (3);
+                fflush(stdout);
+                return (3);
             } else { //processo per controlalre stallo
                 if (checkdeadlock == 1 && checkStarvation == 0) { //viene attivato soltanto se è attivo solamente il checkDeadlock
                     while ( * stopFlag != 1) { // controlla la matrice finchè non trova un deadlock
@@ -302,7 +301,7 @@ int main(int argc, char * argv[]) {
 
         pids[l] = waitpid(pids[l], & wstatus, 0);
 
-        if(l!=conv){    //Ho un child in più rispetto al numero dei semafori, quindi evito di controllarli quando chiudo l'ultimo semaforo
+        if (l != conv) { //Ho un child in più rispetto al numero dei semafori, quindi evito di controllarli quando chiudo l'ultimo semaforo
             sem_post(sem[l].sem);
 
             if (sem_close(sem[l].sem) < 0)
