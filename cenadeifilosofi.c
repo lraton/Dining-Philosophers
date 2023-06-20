@@ -17,10 +17,11 @@
 #include <sys/types.h>
 
 static int * stopFlag;
-
+static int * ctrlc;
 void SignalHandler(int iSignalCode) {
     //printf("\nCtrl+c rilevato\n");
     * stopFlag = 1;
+    * ctrlc = 1;
 }
 
 int main(int argc, char * argv[]) {
@@ -34,6 +35,8 @@ int main(int argc, char * argv[]) {
     //shared memory per poter usare la variabile in ogni child
     stopFlag = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
     * stopFlag = 0;
+    ctrlc = mmap(NULL, sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+    * ctrlc = 0;
 
     //flags selezionate
     char * p;
@@ -66,9 +69,11 @@ int main(int argc, char * argv[]) {
         //genero per ogni semaforo un nome univoco
         sprintf(sem[i].name, "/semaphore%zu", i);
         //stampo il nome del semaforo per test
+        /*
         for (int j = 0; j < strlen(sem[i].name); j++) {
             printf("%c", sem[i].name[j]);
         }
+        */
 
         //nel dubbio chiudo e unlinko i semafori prima di crearli, per evitare che erano rimasti salvati nel sistema ed evitare problemi
         sem_close(sem[i].sem);
@@ -118,9 +123,6 @@ int main(int argc, char * argv[]) {
                                 sem_wait(sem[i].sem);
                             }
                             if ( * stopFlag == 1 || s == -1) { //Dopo ogni wait effettuo il controllo se il timedwait è scaduto o se è attiva la flag per stopapre tutto
-                                if (s == -1) {
-                                    printf("\nStarvation detected \n");
-                                }
                                 * stopFlag = 1;
                                 break;
                             }
@@ -133,9 +135,6 @@ int main(int argc, char * argv[]) {
                                 sem_wait(sem[i + 1].sem);
                             }
                             if ( * stopFlag == 1 || s == -1) {
-                                if (s == -1) {
-                                    printf("\nStarvation detected \n");
-                                }
                                 * stopFlag = 1;
                                 break;
                             }
@@ -148,9 +147,6 @@ int main(int argc, char * argv[]) {
                                 sem_wait(sem[0].sem);
                             }
                             if ( * stopFlag == 1 || s == -1) {
-                                if (s == -1) {
-                                    printf("\nStarvation detected \n");
-                                }
                                 * stopFlag = 1;
                                 break;
                             }
@@ -163,9 +159,6 @@ int main(int argc, char * argv[]) {
                                 sem_wait(sem[i].sem);
                             }
                             if ( * stopFlag == 1 || s == -1) {
-                                if (s == -1) {
-                                    printf("\nStarvation detected \n");
-                                }
                                 * stopFlag = 1;
                                 break;
                             }
@@ -178,9 +171,6 @@ int main(int argc, char * argv[]) {
                         printf("\n");
                         //sleep(1);
                         if ( * stopFlag == 1 || s == -1) {
-                            if (s == -1) {
-                                printf("\nStarvation detected \n");
-                            }
                             * stopFlag = 1;
                             break;
                         }
@@ -309,6 +299,12 @@ int main(int argc, char * argv[]) {
 
             if (sem_unlink(sem[l].name) < 0)
                 perror(sem[l].name);
+        }
+
+        if(* ctrlc == 1){ //se è stato premuto in sigint il programma è stato chiuso per quello, altrimenti era in starvation
+            printf("\n Ctrl+c rilevato ");
+        }else{
+            printf("\n Starvation rilevato ");
         }
 
         if (WIFEXITED(wstatus))
