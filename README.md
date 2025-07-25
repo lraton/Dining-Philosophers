@@ -1,6 +1,8 @@
 # Dining Philosophers with Deadlock and Starvation Detection
 
-This C program simulates the classic **Dining Philosophers Problem** using **POSIX semaphores** and **shared memory**, with configurable options for:
+This C program simulates the classic **Dining Philosophers Problem** using **POSIX semaphores** and **shared memory**.
+It was created for the *Sistemi Operativi* project (2022/2023) by **Filippo Notari**.
+With configurable options for:
 
 - Deadlock detection  
 - Starvation detection  
