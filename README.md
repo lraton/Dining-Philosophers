@@ -1,15 +1,15 @@
-# 🍝 Dining Philosophers with Deadlock and Starvation Detection
+# Dining Philosophers with Deadlock and Starvation Detection
 
 This C program simulates the classic **Dining Philosophers Problem** using **POSIX semaphores** and **shared memory**, with configurable options for:
 
-- 🔁 Deadlock detection  
-- 🕒 Starvation detection  
-- ✅ Deadlock-free (safe) strategy  
-- 📥 Graceful shutdown on `Ctrl+C`  
+- Deadlock detection  
+- Starvation detection  
+- Deadlock-free (safe) strategy  
+- Graceful shutdown on `Ctrl+C`  
 
 ---
 
-## 🧠 How It Works
+## How It Works
 
 Each philosopher is implemented as a child process that tries to acquire two forks (represented by semaphores) to eat. The following modes can be selected:
 
